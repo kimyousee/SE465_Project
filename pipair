@@ -1,4 +1,4 @@
 #!/bin/bash
 
-eval "lli pipair.bc $1 $2 $3"
+eval "./pipairTarget $1 $2 $3"
 
