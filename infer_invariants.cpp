@@ -28,13 +28,20 @@ vector<string> exec(const char* cmd) {
 }
 
 void createCallGraph(vector<string> llvmOut, CallGraph& callGraph) {
-	string match1 = "Call graph node for function: '(.*)'<<0x[a-f0-9]+{7}>> #uses=[0-9]+";
+	//CallGraph *callGraph = new CallGraph();
+	// string match1 = "Call graph node for function: '(.*)'<<0x[a-f0-9]+{7}>> #uses=[0-9]+";
+	string firstLine = "Call graph node for function: \'";
 	for (vector<string>::iterator it = llvmOut.begin(); it != llvmOut.end(); ++it) {
 		// see if it matches to the things and call addNodes ....
 		string currLine = (*it); //do we need to get rid of spaces?
-		if ( regex_match (currLine, regex(match1)) ) {
-			callGraph.addNodes(currLine);
-		}
+		// if ( regex_match (currLine, regex(match1)) ) {
+		size_t findFirst = currLine.find(firstLine);
+		if (findFirst < currLine.length()){
+			size_t findEndFunction = currLine.find('\'', findFirst+1);
+			string functionName = currLine.substr(findFirst,findEndFunction);
+			cout << "Adding: " << functionName  << " to callGraph" << endl;
+			callGraph.addNodes(functionName);
+		} 
 	}
 }
 
