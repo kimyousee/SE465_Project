@@ -37,12 +37,15 @@ public:
 
 class CallGraph {
 private:
-	std::set<GraphNode> functionSet;
-	std::map<GraphNode, std::vector<GraphNode> > childFunctions;
+	// std::set<GraphNode> functionSet;
+	// std::map<GraphNode, std::set<GraphNode> > childFunctions;
+	std::set<std::string> functionSet;
+	std::map<std::string, std::set<std::string> > childFunctions;
 public:
 	CallGraph();
 	~CallGraph();
 	void addNodes(std::string functionName);
+	void addEdges(std::string parentFunction, std::string childFunctionName);
 };
 
 #endif
