@@ -1,6 +1,4 @@
 #!/bin/bash
 
-BCNAME = $1
-SUPPORT = $2
-CONFIDENCE = $3
-eval "lli pipair.bc $BCNAME $SUPPORT $CONFIDENCE"
+eval "lli pipair.bc $1 $2 $3"
+
