@@ -10,15 +10,22 @@
 #include <string>
 #include <algorithm>
 
-struct GraphNode{
+struct GraphNode {
 	std::string name;
+
+	GraphNode(const std::string& strName = "")
+		: name(strName) {}
+
+	bool operator<(const GraphNode& rhs) const {
+		return name < rhs.name;
+	}
 };
 
-bool operator<(const GraphNode &a, const GraphNode &b) {
-    return a.name < b.name;
-}
+// bool operator<(const GraphNode &a, const GraphNode &b) {
+// 	return a.name < b.name;
+// }
 
-struct find_by_name{
+struct find_by_name {
 private:
 	std::string name;
 public:
@@ -28,7 +35,7 @@ public:
 	}
 };
 
-class CallGraph{
+class CallGraph {
 private:
 	std::set<GraphNode> functionSet;
 	std::map<GraphNode, std::vector<GraphNode> > childFunctions;
