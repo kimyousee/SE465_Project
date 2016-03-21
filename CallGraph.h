@@ -1,3 +1,6 @@
+#ifndef _CALL_GRAPH
+#define _CALL_GRAPH
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -7,27 +10,33 @@
 #include <string>
 #include <algorithm>
 
-struct graphNode{
+struct GraphNode{
 	std::string name;
 };
+
+bool operator<(const GraphNode &a, const GraphNode &b) {
+    return a.name < b.name;
+}
 
 struct find_by_name{
 private:
 	std::string name;
 public:
 	find_by_name(const std::string & name) : name(name) {}
-	bool operator()(const graphNode & node) {
+	bool operator()(const GraphNode & node) {
 		return node.name == name;
 	}
 };
 
 class CallGraph{
 private:
-	std::set<graphNode> functionSet;
-	std::map<graphNode, std::vector<graphNode> > childFunctions;
+	std::set<GraphNode> functionSet;
+	std::map<GraphNode, std::vector<GraphNode> > childFunctions;
 public:
 	CallGraph();
+	~CallGraph();
 	void addNodes(std::string functionName);
 };
 
+#endif
 

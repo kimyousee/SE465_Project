@@ -27,8 +27,8 @@ vector<string> exec(const char* cmd) {
 	return result;
 }
 
-CallGraph createCallGraph(vector<string> llvmOut) {
-	CallGraph callGraph;
+void createCallGraph(vector<string> llvmOut, CallGraph& callGraph) {
+	//CallGraph *callGraph = new CallGraph();
 	string match1 = "Call graph node for function: '(.*)'<<0x[a-f0-9]+{7}>> #uses=[0-9]+";
 	for (vector<string>::iterator it = llvmOut.begin(); it != llvmOut.end(); ++it) {
 		// see if it matches to the things and call addNodes ....
@@ -37,7 +37,6 @@ CallGraph createCallGraph(vector<string> llvmOut) {
 			callGraph.addNodes(currLine);
 		}
 	}
-	return callGraph;
 }
 
 int main(int argc, char* argv[]) {
@@ -62,8 +61,9 @@ int main(int argc, char* argv[]) {
 		// print an error message?
 		cout << "Invalid Arguments" << endl;
 	}
-
-	CallGraph callGraph = createCallGraph(llvmOutp);
+	CallGraph* callGraph = new CallGraph();
+	createCallGraph(llvmOutp, *callGraph);
+	// delete callGraph;
 
 }
 

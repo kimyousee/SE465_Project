@@ -2,12 +2,16 @@
 
 using namespace std;
 
+CallGraph::CallGraph() {}
+CallGraph::~CallGraph() {}
+
 void CallGraph::addNodes(string functionName){
-	graphNode currNode;
+	GraphNode currNode;
 	currNode.name = functionName;
-	std::set<graphNode>::iterator result = std::find_if(functionSet.begin(), functionSet.end(),
-	                                                    find_by_name(functionName));
-	if (result != functionSet.end()) {
+
+	// std::set<Node>::iterator result = std::find_if(functionSet.begin(), functionSet.end(),
+	//                                                     find_by_name(functionName));
+	if (functionSet.find(functionName) != functionSet.end()) {
 		functionSet.insert(currNode);
 	}
 }
