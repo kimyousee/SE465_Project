@@ -1,4 +1,0 @@
-#!/bin/bash
-
-eval "./pipairTarget $1 $2 $3"
-

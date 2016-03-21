@@ -6,7 +6,7 @@ CPPFILES = infer_invariants.cpp CallGraph.cpp
 OBJECTS = infer_invariants.o CallGraph.o
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = ${OBJECTS:.o=}
-TARGET = pipairTarget
+TARGET = pipair
 
 all: ${OBJECTS} ${TARGET}
 
