@@ -1,14 +1,21 @@
-CXX = clang
+CXX = clang++
 CXXFLAGS = -emit-llvm
+LINK = llvm-link
+CPPFILES = infer_invariants.cpp CallGraph.cpp
 OBJECTS = infer_invariants.o CallGraph.o
-CPPFILES = infer_invariants.cpp
 DEPENDS = ${OBJECTS:.o=.d}
-EXEC = pipair
+EXEC = ${OBJECTS:.o=}
+TARGET = pipair
 
-${EXEC} : ${OBJECTS}
-        ${CXX} ${CXXFLAGS} -c {CPPFILES} -o ${EXEC}
+all: ${OBJECTS} ${TARGET}
+
+%: %.o
+	${CXX} -o $@ -shared $< ${CXXFLAGS}
+
+${TARGET} : ${OBJECTS}
+	${LINK} -v ${OBJECTS} -o $@
 
 clean :
-        rm -rf ${DEPENDS} ${OBJECTS} ${EXEC}
+	rm -rf ${DEPENDS} ${OBJECTS} ${EXEC}
 
 -include ${DEPENDS}
