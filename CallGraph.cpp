@@ -22,6 +22,7 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 	// childNode.name = childFunctionName;
 	set<string> childrenSet;
 	map<string,set<string> >::iterator itChildFunctions = childFunctions.find(parentFunction);
+	// first edge/child of parentFunction
 	if (itChildFunctions == childFunctions.end()) {
 		childrenSet.insert(childFunctionName);
 		childFunctions[parentFunction] = childrenSet;
@@ -29,23 +30,43 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 		if ((childFunctions[parentFunction]).find(childFunctionName) != childFunctions[parentFunction].end()){
 			return; // if it is in the set already
 		}
-		(itChildFunctions->second).insert(childFunctionName);
-	}
-	// childFunctions[parentFunction].insert(childFunctionName);
-
-	// Iterator through current edges for this parentFunction and add the pairs
-	set<string>::iterator it;
-	for(it = childFunctions[parentFunction].begin(); it != childFunctions[parentFunction].end(); it++){
-		string cur = *it;
-		pair<string,string> pair1 = make_pair(cur,childFunctionName);
-		pair<string,string> pair2 = make_pair(childFunctionName,cur);
-		if (supportPairs.find(pair1) == supportPairs.end()){
-			supportPairs[pair1] = 1;
-			supportPairs[pair2] = 1;
-		} else {
-			supportPairs[pair1] += 1;
-			supportPairs[pair2] += 1;
+		// Iterator through current edges for this parentFunction and add the pairs
+		set<string>::iterator it;
+		for(it = childFunctions[parentFunction].begin(); it != childFunctions[parentFunction].end(); it++){
+			string cur = *it;
+			pair<string,string> pair1 = make_pair(cur,childFunctionName);
+			pair<string,string> pair2 = make_pair(childFunctionName,cur);
+			if (supportPairs.find(pair1) == supportPairs.end()){
+				supportPairs[pair1] = 1;
+				supportPairs[pair2] = 1;
+			} else {
+				supportPairs[pair1] += 1;
+				supportPairs[pair2] += 1;
+			}
 		}
+		(itChildFunctions->second).insert(childFunctionName);
+
+		if (supportMap.find(childFunctionName) == supportMap.end()) {
+			supportMap[childFunctionName] = 1;
+		} else {
+			supportMap[childFunctionName] += 1;
+		}
+	}	
+}
+
+void CallGraph::calculateConfidence(int confidence, int support) {
+	for (map<pair<string,string>,int>::iterator it=supportPairs.begin(); it!=supportPairs.end(); ++it) {
+		pair<string,string> currPair = it->first;
+		int supportPairVal = it->second;
+		int supportVal = supportMap.find(currPair.first)->second;
+		int currConfidence = ((double)supportPairVal/(double)supportVal)*100 ;
+		if (currConfidence >= confidence && supportPairVal >= support) {
+			//bug: A in scope2, pair: (A, B), support: 3, confidence: 75.00%
+			//cout << "bug: " << currPair.first << " in " << parentFunction
+		}
+
+
 	}
 }
+
 

@@ -42,11 +42,15 @@ private:
 	std::set<std::string> functionSet;
 	std::map<std::string, std::set<std::string> > childFunctions;
 	std::map<std::pair<std::string, std::string>, int> supportPairs;
+	std::map<std::string, int> supportMap;
 public:
 	CallGraph();
 	~CallGraph();
 	void addNodes(std::string functionName);
 	void addEdges(std::string parentFunction, std::string childFunctionName);
+	// std::map<std::pair<std::string, std::string>, int> getSupportPairs();
+	// std::map<std::string, int> getSupportMap;
+	void calculateConfidence(int confidence, int support);
 };
 
 #endif

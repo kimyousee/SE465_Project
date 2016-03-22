@@ -85,6 +85,7 @@ int main(int argc, char* argv[]) {
 
 	CallGraph* callGraph = new CallGraph();
 	createCallGraph(llvmOutp, *callGraph);
+	callGraph->calculateConfidence(T_CONFIDENCE, T_SUPPORT);
 	delete callGraph;
 
 }
