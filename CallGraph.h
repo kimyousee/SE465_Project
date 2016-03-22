@@ -41,6 +41,7 @@ private:
 	// std::map<GraphNode, std::set<GraphNode> > childFunctions;
 	std::set<std::string> functionSet;
 	std::map<std::string, std::set<std::string> > childFunctions;
+	std::map<std::pair<std::string, std::string>, int> supportPairs;
 public:
 	CallGraph();
 	~CallGraph();
