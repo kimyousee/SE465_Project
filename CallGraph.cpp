@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "CallGraph.h"
 
 using namespace std;
@@ -89,10 +90,23 @@ void CallGraph::findBugs(int confidence, int support){
 		string scope = *it;
 		// iterate through scope's use functions
 		for(set<string>::iterator itChildren = childFunctions[scope].begin(); itChildren != childfunctions[scope].end(); itChildren++){
-			set<string>::iterator itPair = itChildren
+			set<string>::iterator itPair = itChildren;
 			itPair++;
 			for(;itPair != childFunctions[scope].end(); itPair++){
-
+				pair<string,string> pairFuncs = make_pair(*itChildren, *itPair);
+				pair<double,double> pairConf = calculateConfidence(pairFuncs);
+				int supportPairVal = supportPairs[pairFuncs];
+				if (supportPairVal >= support) {
+					if(pairConf.first >= confidence){
+						cout << "bug: " << pairFuncs.first << " in " << *it 
+						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: " 
+						     << supportPairVal << ", confidence: " << pairConf.first << "\%" << endl;
+					} else if (pairConf.second >= confidence){
+						cout << "bug: " << pairFuncs.second << " in " << *it 
+						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: " 
+						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
+					}
+				} 
 			}
 		}
 	}
