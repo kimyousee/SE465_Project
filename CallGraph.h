@@ -50,7 +50,9 @@ public:
 	void addEdges(std::string parentFunction, std::string childFunctionName);
 	// std::map<std::pair<std::string, std::string>, int> getSupportPairs();
 	// std::map<std::string, int> getSupportMap;
-	void calculateConfidence(int confidence, int support);
+	//void calculateConfidence(int confidence, int support);
+	void calculateConfidence(pair<string,string>& pairFunctions);
+	void findBugs(int confidence, int support);
 };
 
 #endif

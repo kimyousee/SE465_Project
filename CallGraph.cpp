@@ -54,6 +54,7 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 	}	
 }
 
+/*
 void CallGraph::calculateConfidence(int confidence, int support) {
 	for (map<pair<string,string>,int>::iterator it=supportPairs.begin(); it!=supportPairs.end(); ++it) {
 		pair<string,string> currPair = it->first;
@@ -66,6 +67,26 @@ void CallGraph::calculateConfidence(int confidence, int support) {
 		}
 
 
+	}
+}
+*/
+
+void CallGraph::calculateConfidence(pair<string,string>& pairFunctions){
+
+}
+
+void CallGraph::findBugs(int confidence, int support){
+	// iterate through each scope
+	for(set<string>::iterator it = functionSet.begin(); it != functionSet.end(); it++){
+		string scope = *it;
+		// iterate through scope's use functions
+		for(set<string>::iterator itChildren = childFunctions[scope].begin(); itChildren != childfunctions[scope].end(); itChildren++){
+			set<string>::iterator itPair = itChildren
+			itPair++;
+			for(;itPair != childFunctions[scope].end(); itPair++){
+
+			}
+		}
 	}
 }
 
