@@ -51,7 +51,7 @@ public:
 	// std::map<std::pair<std::string, std::string>, int> getSupportPairs();
 	// std::map<std::string, int> getSupportMap;
 	//void calculateConfidence(int confidence, int support);
-	void calculateConfidence(pair<string,string>& pairFunctions);
+	std::pair<int,int> calculateConfidence(std::pair<std::string,std::string>& pairFunctions);
 	void findBugs(int confidence, int support);
 };
 

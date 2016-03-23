@@ -71,8 +71,16 @@ void CallGraph::calculateConfidence(int confidence, int support) {
 }
 */
 
-void CallGraph::calculateConfidence(pair<string,string>& pairFunctions){
-
+pair<int,int> CallGraph::calculateConfidence(pair<string,string>& pairFunctions) {
+	if (supportPairs.find(pairFunctions) != supportPairs.end()) {
+		int supportPairVal = supportPairs.find(pairFunctions)->second;
+		int supportA = supportMap.find(pairFunctions.first)->second;
+		int supportB = supportMap.find(pairFunctions.second)->second;
+		int confidenceA = ((double)supportPairVal/(double)supportA)*100;
+		int confidenceB = ((double)supportPairVal/(double)supportB)*100;
+		return make_pair(confidenceA,confidenceB);
+	}
+	return make_pair(-1,-1);
 }
 
 void CallGraph::findBugs(int confidence, int support){
