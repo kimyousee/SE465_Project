@@ -11,7 +11,7 @@
 
 using namespace std;
 
-// To compile into pipair, use 
+// To compile into pipair, use
 // make all
 // ./pipair <bitcode.bc> <support> <confidence>
 
@@ -42,15 +42,15 @@ void createCallGraph(vector<string> llvmOut, CallGraph& callGraph) {
 		size_t findCallsite = currLine.find(callsiteLine);
 		if (findFirst != string::npos) {
 			findFirst += firstLine.length();
-			size_t findEndFunction = currLine.find('\'', findFirst+1);
-			functionName = currLine.substr(findFirst,findEndFunction-findFirst);
+			size_t findEndFunction = currLine.find('\'', findFirst + 1);
+			functionName = currLine.substr(findFirst, findEndFunction - findFirst);
 			cout << "Adding: " << functionName  << " to callGraph" << endl;
 			callGraph.addNodes(functionName);
 		} else if (findCallsite != string::npos) {
 			if (functionName == "") {continue;}
 			findCallsite += callsiteLine.length();
-			size_t findCallsiteFunction = currLine.find('\'', findCallsite+1);
-			childFunctionName = currLine.substr(findCallsite,findCallsiteFunction - findCallsite);
+			size_t findCallsiteFunction = currLine.find('\'', findCallsite + 1);
+			childFunctionName = currLine.substr(findCallsite, findCallsiteFunction - findCallsite);
 			cout << "Adding: " << childFunctionName  << " to parent " << functionName << " in callGraph" << endl;
 			callGraph.addEdges(functionName, childFunctionName);
 		}
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 	} else if (argc == 2) {
 		// ./pipair <bitcode file>
 		// default support 3, confidence 65%
-		opt_command +=string(argv[1]) + string(" 2>&1 >/dev/null");
+		opt_command += string(argv[1]) + string(" 2>&1 >/dev/null");
 		llvmOutp = exec(opt_command.c_str());
 	} else {
 		cout << "Invalid Arguments" << endl;

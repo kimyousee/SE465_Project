@@ -13,7 +13,7 @@ void CallGraph::addNodes(string functionName) {
 	// if (functionSet.find(currNode) == functionSet.end())
 	// 	functionSet.insert(currNode);
 
-	if (functionSet.find(functionName) == functionSet.end()) 
+	if (functionSet.find(functionName) == functionSet.end())
 		functionSet.insert(functionName);
 
 }
@@ -22,22 +22,22 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 	// GraphNode childNode;
 	// childNode.name = childFunctionName;
 	set<string> childrenSet;
-	map<string,set<string> >::iterator itChildFunctions = childFunctions.find(parentFunction);
+	map<string, set<string> >::iterator itChildFunctions = childFunctions.find(parentFunction);
 	// first edge/child of parentFunction
 	if (itChildFunctions == childFunctions.end()) {
 		childrenSet.insert(childFunctionName);
 		childFunctions[parentFunction] = childrenSet;
 	} else {
-		if ((childFunctions[parentFunction]).find(childFunctionName) != childFunctions[parentFunction].end()){
+		if ((childFunctions[parentFunction]).find(childFunctionName) != childFunctions[parentFunction].end()) {
 			return; // if it is in the set already
 		}
 		// Iterator through current edges for this parentFunction and add the pairs
 		set<string>::iterator it;
-		for(it = childFunctions[parentFunction].begin(); it != childFunctions[parentFunction].end(); it++){
+		for (it = childFunctions[parentFunction].begin(); it != childFunctions[parentFunction].end(); it++) {
 			string cur = *it;
-			pair<string,string> pair1 = make_pair(cur,childFunctionName);
-			pair<string,string> pair2 = make_pair(childFunctionName,cur);
-			if (supportPairs.find(pair1) == supportPairs.end()){
+			pair<string, string> pair1 = make_pair(cur, childFunctionName);
+			pair<string, string> pair2 = make_pair(childFunctionName, cur);
+			if (supportPairs.find(pair1) == supportPairs.end()) {
 				supportPairs[pair1] = 1;
 				supportPairs[pair2] = 1;
 			} else {
@@ -52,7 +52,7 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 		} else {
 			supportMap[childFunctionName] += 1;
 		}
-	}	
+	}
 }
 
 /*
@@ -66,47 +66,45 @@ void CallGraph::calculateConfidence(int confidence, int support) {
 			//bug: A in scope2, pair: (A, B), support: 3, confidence: 75.00%
 			//cout << "bug: " << currPair.first << " in " << parentFunction
 		}
-
-
 	}
 }
 */
 
-pair<int,int> CallGraph::calculateConfidence(pair<string,string>& pairFunctions) {
+pair<double, double> CallGraph::calculateConfidence(pair<string, string>& pairFunctions) {
 	if (supportPairs.find(pairFunctions) != supportPairs.end()) {
 		int supportPairVal = supportPairs.find(pairFunctions)->second;
 		int supportA = supportMap.find(pairFunctions.first)->second;
 		int supportB = supportMap.find(pairFunctions.second)->second;
-		int confidenceA = ((double)supportPairVal/(double)supportA)*100;
-		int confidenceB = ((double)supportPairVal/(double)supportB)*100;
-		return make_pair(confidenceA,confidenceB);
+		double confidenceA = ((double)supportPairVal / (double)supportA) * 100;
+		double confidenceB = ((double)supportPairVal / (double)supportB) * 100;
+		return make_pair(confidenceA, confidenceB);
 	}
-	return make_pair(-1,-1);
+	return make_pair(-1.0, -1.0);
 }
 
-void CallGraph::findBugs(int confidence, int support){
+void CallGraph::findBugs(int confidence, int support) {
 	// iterate through each scope
-	for(set<string>::iterator it = functionSet.begin(); it != functionSet.end(); it++){
+	for (set<string>::iterator it = functionSet.begin(); it != functionSet.end(); it++) {
 		string scope = *it;
 		// iterate through scope's use functions
-		for(set<string>::iterator itChildren = childFunctions[scope].begin(); itChildren != childfunctions[scope].end(); itChildren++){
+		for (set<string>::iterator itChildren = childFunctions[scope].begin(); itChildren != childFunctions[scope].end(); itChildren++) {
 			set<string>::iterator itPair = itChildren;
 			itPair++;
-			for(;itPair != childFunctions[scope].end(); itPair++){
-				pair<string,string> pairFuncs = make_pair(*itChildren, *itPair);
-				pair<double,double> pairConf = calculateConfidence(pairFuncs);
+			for (; itPair != childFunctions[scope].end(); itPair++) {
+				pair<string, string> pairFuncs = make_pair(*itChildren, *itPair);
+				pair<double, double> pairConf = calculateConfidence(pairFuncs);
 				int supportPairVal = supportPairs[pairFuncs];
 				if (supportPairVal >= support) {
-					if(pairConf.first >= confidence){
-						cout << "bug: " << pairFuncs.first << " in " << *it 
-						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: " 
-						     << supportPairVal << ", confidence: " << pairConf.first << "\%" << endl;
-					} else if (pairConf.second >= confidence){
-						cout << "bug: " << pairFuncs.second << " in " << *it 
-						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: " 
+					if (pairConf.first >= confidence) {
+						cout << "bug: " << pairFuncs.first << " in " << *it
+						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
+						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
+					} else if (pairConf.second >= confidence) {
+						cout << "bug: " << pairFuncs.second << " in " << *it
+						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
 						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
 					}
-				} 
+				}
 			}
 		}
 	}
