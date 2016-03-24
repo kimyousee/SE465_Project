@@ -99,7 +99,8 @@ void CallGraph::findBugs(int confidence, int support) {
 						cout << "bug: " << pairFuncs.first << " in " << *it
 						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
 						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
-					} else if (pairConf.second >= confidence) {
+					}
+					if (pairConf.second >= confidence) {
 						cout << "bug: " << pairFuncs.second << " in " << *it
 						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
 						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
