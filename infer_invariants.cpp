@@ -44,22 +44,20 @@ void createCallGraph(vector<string> llvmOut, CallGraph& callGraph) {
 			findFirst += firstLine.length();
 			size_t findEndFunction = currLine.find('\'', findFirst + 1);
 			functionName = currLine.substr(findFirst, findEndFunction - findFirst);
-			cout << "Adding: " << functionName  << " to callGraph" << endl;
+			// cout << "Adding: " << functionName  << " to callGraph" << endl;
 			callGraph.addNodes(functionName);
 		} else if (findCallsite != string::npos) {
 			if (functionName == "") {continue;}
 			findCallsite += callsiteLine.length();
 			size_t findCallsiteFunction = currLine.find('\'', findCallsite + 1);
 			childFunctionName = currLine.substr(findCallsite, findCallsiteFunction - findCallsite);
-			cout << "Adding: " << childFunctionName  << " to parent " << functionName << " in callGraph" << endl;
+			// cout << "Adding: " << childFunctionName  << " to parent " << functionName << " in callGraph" << endl;
 			callGraph.addEdges(functionName, childFunctionName);
 		}
 	}
 }
 
 int main(int argc, char* argv[]) {
-	cout << argc << endl;
-	// cout << argv[0] << endl;
 	vector<string> llvmOutp;
 	int T_SUPPORT = 3 ;
 	int T_CONFIDENCE = 65;
@@ -85,6 +83,7 @@ int main(int argc, char* argv[]) {
 
 	CallGraph* callGraph = new CallGraph();
 	createCallGraph(llvmOutp, *callGraph);
+	callGraph->findBugs(T_CONFIDENCE, T_SUPPORT);
 	// callGraph->calculateConfidence(T_CONFIDENCE, T_SUPPORT);
 	delete callGraph;
 
