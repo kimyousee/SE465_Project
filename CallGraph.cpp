@@ -47,12 +47,11 @@ void CallGraph::addEdges(string parentFunction, string childFunctionName) {
 			}
 		}
 		(itChildFunctions->second).insert(childFunctionName);
-
-		if (supportMap.find(childFunctionName) == supportMap.end()) {
-			supportMap[childFunctionName] = 1;
-		} else {
-			supportMap[childFunctionName] += 1;
-		}
+	}
+	if (supportMap.find(childFunctionName) == supportMap.end()) {
+		supportMap[childFunctionName] = 1;
+	} else {
+		supportMap[childFunctionName] += 1;
 	}
 }
 
@@ -99,14 +98,14 @@ void CallGraph::findBugs(int confidence, int support) {
 					if (pairConf.first >= confidence) {
 						stringstream ss;
 						ss << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
-						     << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
-						highConfPairs[make_pair(pairFuncs.first,pairFuncs.second)] = ss.str();
+						   << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
+						highConfPairs[make_pair(pairFuncs.first, pairFuncs.second)] = ss.str();
 					}
 					if (pairConf.second >= confidence) {
 						stringstream ss;
 						ss << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
-						     << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
-						highConfPairs[make_pair(pairFuncs.second,pairFuncs.first)] = ss.str();
+						   << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
+						highConfPairs[make_pair(pairFuncs.second, pairFuncs.first)] = ss.str();
 					}
 				}
 			}
@@ -117,8 +116,8 @@ void CallGraph::findBugs(int confidence, int support) {
 		string scope = *it;
 
 		for (map<pair<string, string>, string>::iterator it2 = highConfPairs.begin(); it2 != highConfPairs.end(); it2++) {
-			if ( childFunctions.find(it2.first.first) != childFunctions.end() && childFunctions.find(it2.first.second) == childFunctions.end() ) {
-				cout << "bug: " << it2.first.first << " in " << *it <<  it2.second << end;
+			if ( childFunctions.find(it2->first.first) != childFunctions.end() && childFunctions.find(it2->first.second) == childFunctions.end() ) {
+				cout << "bug: " << it2->first.first << " in " << *it <<  it2->second << endl;
 			}
 		}
 	}
