@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <sstream>
 #include "CallGraph.h"
 
 using namespace std;
@@ -96,16 +97,28 @@ void CallGraph::findBugs(int confidence, int support) {
 				int supportPairVal = supportPairs[pairFuncs];
 				if (supportPairVal >= support) {
 					if (pairConf.first >= confidence) {
-						cout << "bug: " << pairFuncs.first << " in " << *it
-						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
-						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
+						stringstream ss;
+						ss << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
+						     << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
+						highConfPairs[make_pair(pairFuncs.first,pairFuncs.second)] = ss.str();
 					}
 					if (pairConf.second >= confidence) {
-						cout << "bug: " << pairFuncs.second << " in " << *it
-						     << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
-						     << supportPairVal << ", confidence: " << setprecision(2) << pairConf.first << "\%" << endl;
+						stringstream ss;
+						ss << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
+						     << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
+						highConfPairs[make_pair(pairFuncs.second,pairFuncs.first)] = ss.str();
 					}
 				}
+			}
+		}
+	}
+
+	for (set<string>::iterator it = functionSet.begin(); it != functionSet.end(); it++) {
+		string scope = *it;
+
+		for (map<pair<string, string>, string>::iterator it2 = highConfPairs.begin(); it2 != highConfPairs.end(); it2++) {
+			if ( childFunctions.find(it2.first.first) != childFunctions.end() && childFunctions.find(it2.first.second) == childFunctions.end() ) {
+				cout << "bug: " << it2.first.first << " in " << *it <<  it2.second << end;
 			}
 		}
 	}

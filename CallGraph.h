@@ -43,6 +43,7 @@ private:
 	std::map<std::string, std::set<std::string> > childFunctions;
 	std::map<std::pair<std::string, std::string>, int> supportPairs;
 	std::map<std::string, int> supportMap;
+	std::map<std::pair<std::string, std::string>, std::string > highConfPairs;
 public:
 	CallGraph();
 	~CallGraph();
