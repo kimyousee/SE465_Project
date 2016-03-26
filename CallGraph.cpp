@@ -104,7 +104,7 @@ void CallGraph::findBugs(int confidence, int support) {
 					if (pairConf.second >= confidence) {
 						stringstream ss;
 						ss << ", pair: (" << pairFuncs.first << ", " << pairFuncs.second << "), support: "
-						   << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.first << "\%";
+						   << supportPairVal << ", confidence: " << setprecision(2) << fixed << pairConf.second << "\%";
 						highConfPairs[make_pair(pairFuncs.second, pairFuncs.first)] = ss.str();
 					}
 				}
@@ -116,7 +116,7 @@ void CallGraph::findBugs(int confidence, int support) {
 		string scope = *it;
 
 		for (map<pair<string, string>, string>::iterator it2 = highConfPairs.begin(); it2 != highConfPairs.end(); it2++) {
-			if ( childFunctions.find(it2->first.first) != childFunctions.end() && childFunctions.find(it2->first.second) == childFunctions.end() ) {
+			if ( childFunctions[*it].find(it2->first.first) != childFunctions[*it].end() && childFunctions[*it].find(it2->first.second) == childFunctions[*it].end() ) {
 				cout << "bug: " << it2->first.first << " in " << *it <<  it2->second << endl;
 			}
 		}
