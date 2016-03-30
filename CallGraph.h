@@ -55,7 +55,7 @@ public:
 	std::pair<double, double> calculateConfidence(std::pair<std::string, std::string>& pairFunctions);
 	void findBugs(int confidence, int support);
 	void interproceduralAnalysis();
-	void interprocedural(std::set<std::string> &s, std::string k);
+	std::set<std::string> interprocedural(std::set<std::string> &s, std::string k);
 };
 
 #endif

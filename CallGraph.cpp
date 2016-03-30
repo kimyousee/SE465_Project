@@ -127,16 +127,20 @@ void CallGraph::interproceduralAnalysis() {
 	for (map<string, set<string> >::iterator it = childFunctions.begin(); it != childFunctions.end(); it++) {
 		string key = it->first;
 		set<string> value = it->second;
-		interprocedural(value, key);
+		set<string> tmpSet = interprocedural(value, key);
+		value.insert(tmpSet.begin(),tmpSet.end());
 		value.erase(key);
 	}
 }
 
-void CallGraph::interprocedural(set<string> &s, string k) {
-	set<string> tmpSet = childFunctions.find(k)->second;
-	s.insert(tmpSet.begin(),tmpSet.end());
-	for (set<string>::iterator it = tmpSet.begin(); it != tmpSet.end(); it++) {
+
+set<string> CallGraph::interprocedural(set<string> &s, string k) {
+	set<string> childSet = childFunctions.find(k)->second;
+	s.insert(childSet.begin(),childSet.end());
+	for (set<string>::iterator it = childSet.begin(); it != childSet.end(); it++) {
 		set<string> itChildren = childFunctions.find(*it)->second;
-		s.insert(itChildren.begin(),itChildren.end());
+		set<string> tmpSet = interprocedural(s, *it);
+		s.insert(tmpSet.begin(),tmpSet.end());
 	}
+	return s;
 }
