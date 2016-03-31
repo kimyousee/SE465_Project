@@ -136,7 +136,7 @@ void CallGraph::interproceduralAnalysis() {
 			continue;
 		}
 		set<string> value = it->second;
-		set<string> tmpSet = interprocedural(value, key);
+		set<string> tmpSet = interprocedural(it->second, key);
 		value.insert(tmpSet.begin(),tmpSet.end());
 		value.erase(key);
 	}
@@ -150,6 +150,11 @@ set<string> CallGraph::interprocedural(set<string> &s, string k) {
 	// s.insert(childSet.begin(),childSet.end());
 	for (set<string>::iterator it = childSet.begin(); it != childSet.end(); it++) {
 		map<string, set<string> >::iterator checkit = childFunctions.find(*it);
+		// child not in functionSet. ex: shouldnt reduce to printf 
+		if ( functionSet.find(*it) == functionSet.end() ) {
+			continue;
+		}
+
 		if (visitedFunctions[*it].first == true){ // visited
 			if (visitedFunctions[*it].second == true) { // all children not in functionSet
 				// add this node
@@ -163,11 +168,12 @@ set<string> CallGraph::interprocedural(set<string> &s, string k) {
 			//interprocedural(s, *it);
 			// s.insert(tmpSet.begin(),tmpSet.end());
 		}*/
-		// child not in functionSet. ex: shouldnt reduce to printf 
-		if ( functionSet.find(*it) == functionSet.end() ) {
+		
+		set<string> nodesToAdd = interprocedural(childFunctions.find(*it)->second, *it);
+		if (visitedFunctions[*it].second == true) {
+			newNodes.insert(*it);
 			continue;
 		}
-		set<string> nodesToAdd = interprocedural(childFunctions.find(*it)->second, *it);
 		s.erase(*it);
 		for (set<string>::iterator it2 = nodesToAdd.begin(); it2 != nodesToAdd.end(); it2++){
 			newNodes.insert(*it2);
