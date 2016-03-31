@@ -65,8 +65,12 @@ int main(int argc, char* argv[]) {
 	// Note that opt outputs to stderr so we use 2>&1 >/dev/null
 
 	// argc is 1 normally, arguments start at count 2 and argv[1]
-	if (argc == 4) {
-		// ./pipair <bitcode file> <T_SUPPORT> <T_CONFIDENCE>
+	if (argc == 4 || argc == 5) {
+		// ./pipair <bitcode file> <T_SUPPORT> <T_CONFIDENCE> inter
+		if (argc == 5 && argv[4] != "inter") {
+			cout << "Invalid Arguments" << endl;
+			return 0;
+		}
 		opt_command += string(argv[1]) + string(" 2>&1 >/dev/null");
 		llvmOutp = exec(opt_command.c_str());
 		T_SUPPORT = atoi(argv[2]);
@@ -83,6 +87,7 @@ int main(int argc, char* argv[]) {
 
 	CallGraph* callGraph = new CallGraph();
 	createCallGraph(llvmOutp, *callGraph);
+	if (argc == 5) {callGraph->interproceduralAnalysis();}
 	callGraph->findBugs(T_CONFIDENCE, T_SUPPORT);
 	// callGraph->calculateConfidence(T_CONFIDENCE, T_SUPPORT);
 	delete callGraph;

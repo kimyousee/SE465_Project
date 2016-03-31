@@ -127,12 +127,12 @@ void CallGraph::interproceduralAnalysis() {
 	// initialize visited array
 	set<string>::iterator fxIt = functionSet.begin();
 	for(;fxIt != functionSet.end(); fxIt++){
-		visited[fxIt*] = make_pair(false,true);
+		visitedFunctions[*fxIt] = make_pair(false,true);
 	}
 
 	for (map<string, set<string> >::iterator it = childFunctions.begin(); it != childFunctions.end(); it++) {
 		string key = it->first;
-		if (visited[key].first == true){
+		if (visitedFunctions[key].first == true){
 			continue;
 		}
 		set<string> value = it->second;
@@ -143,16 +143,18 @@ void CallGraph::interproceduralAnalysis() {
 }
 
 
-// set<string> 
-void CallGraph::interprocedural(set<string> &s, string k) {
+set<string> CallGraph::interprocedural(set<string> &s, string k) {
 	set<string> childSet = childFunctions.find(k)->second;
+	set<string> newNodes;
 	// condition before inserting it
 	// s.insert(childSet.begin(),childSet.end());
 	for (set<string>::iterator it = childSet.begin(); it != childSet.end(); it++) {
 		map<string, set<string> >::iterator checkit = childFunctions.find(*it);
-		if (visited[*it].first == true){ // visited
-			if (visited[*it].second == true) { // all children not in functionSet
+		if (visitedFunctions[*it].first == true){ // visited
+			if (visitedFunctions[*it].second == true) { // all children not in functionSet
 				// add this node
+				newNodes.insert(*it);
+				continue;
 			}
 		}
 		/*if (checkit != childFunctions.end()) {
@@ -161,13 +163,19 @@ void CallGraph::interprocedural(set<string> &s, string k) {
 			//interprocedural(s, *it);
 			// s.insert(tmpSet.begin(),tmpSet.end());
 		}*/
+		// child not in functionSet. ex: shouldnt reduce to printf 
 		if ( functionSet.find(*it) == functionSet.end() ) {
 			continue;
 		}
-		interprocedural(s, *it);
-		visited[*it].second = false;
+		set<string> nodesToAdd = interprocedural(childFunctions.find(*it)->second, *it);
+		s.erase(*it);
+		for (set<string>::iterator it2 = nodesToAdd.begin(); it2 != nodesToAdd.end(); it2++){
+			newNodes.insert(*it2);
+			s.insert(*it2);
+		}
+		visitedFunctions[*it].second = false;
 
 	}
-	visited[*it].first = true;
-	// return s;
+	visitedFunctions[k].first = true;
+	return newNodes;
 }
