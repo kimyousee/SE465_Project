@@ -137,8 +137,6 @@ void CallGraph::interproceduralAnalysis() {
 		}
 		set<string> value = it->second;
 		set<string> tmpSet = interprocedural(it->second, key);
-		value.insert(tmpSet.begin(),tmpSet.end());
-		value.erase(key);
 	}
 }
 
@@ -160,6 +158,9 @@ set<string> CallGraph::interprocedural(set<string> &s, string k) {
 				// add this node
 				newNodes.insert(*it);
 				continue;
+			} else {
+				// add child nodes
+				newNodes.insert((childFunctions.find(*it)->second).begin(),(childFunctions.find(*it)->second).end())
 			}
 		}
 		/*if (checkit != childFunctions.end()) {
@@ -175,10 +176,8 @@ set<string> CallGraph::interprocedural(set<string> &s, string k) {
 			continue;
 		}
 		s.erase(*it);
-		for (set<string>::iterator it2 = nodesToAdd.begin(); it2 != nodesToAdd.end(); it2++){
-			newNodes.insert(*it2);
-			s.insert(*it2);
-		}
+		newNodes.insert(nodesToAdd.begin(), nodesToAdd.end());
+		s.insert(nodesToAdd.begin(),nodesToAdd.end());
 		visitedFunctions[*it].second = false;
 
 	}
