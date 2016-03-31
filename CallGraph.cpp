@@ -124,8 +124,17 @@ void CallGraph::findBugs(int confidence, int support) {
 }
 
 void CallGraph::interproceduralAnalysis() {
+	// initialize visited array
+	set<string>::iterator fxIt = functionSet.begin();
+	for(;fxIt != functionSet.end(); fxIt++){
+		visited[fxIt*] = make_pair(false,true);
+	}
+
 	for (map<string, set<string> >::iterator it = childFunctions.begin(); it != childFunctions.end(); it++) {
 		string key = it->first;
+		if (visited[key].first == true){
+			continue;
+		}
 		set<string> value = it->second;
 		set<string> tmpSet = interprocedural(value, key);
 		value.insert(tmpSet.begin(),tmpSet.end());
@@ -134,13 +143,31 @@ void CallGraph::interproceduralAnalysis() {
 }
 
 
-set<string> CallGraph::interprocedural(set<string> &s, string k) {
+// set<string> 
+void CallGraph::interprocedural(set<string> &s, string k) {
 	set<string> childSet = childFunctions.find(k)->second;
-	s.insert(childSet.begin(),childSet.end());
+	// condition before inserting it
+	// s.insert(childSet.begin(),childSet.end());
 	for (set<string>::iterator it = childSet.begin(); it != childSet.end(); it++) {
-		set<string> itChildren = childFunctions.find(*it)->second;
-		set<string> tmpSet = interprocedural(s, *it);
-		s.insert(tmpSet.begin(),tmpSet.end());
+		map<string, set<string> >::iterator checkit = childFunctions.find(*it);
+		if (visited[*it].first == true){ // visited
+			if (visited[*it].second == true) { // all children not in functionSet
+				// add this node
+			}
+		}
+		/*if (checkit != childFunctions.end()) {
+			set<string> itChildren = checkit->second;
+			// set<string> tmpSet = 
+			//interprocedural(s, *it);
+			// s.insert(tmpSet.begin(),tmpSet.end());
+		}*/
+		if ( functionSet.find(*it) == functionSet.end() ) {
+			continue;
+		}
+		interprocedural(s, *it);
+		visited[*it].second = false;
+
 	}
-	return s;
+	visited[*it].first = true;
+	// return s;
 }
