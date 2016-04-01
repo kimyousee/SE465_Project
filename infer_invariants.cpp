@@ -13,7 +13,7 @@ using namespace std;
 
 // To compile into pipair, use
 // make all
-// ./pipair <bitcode.bc> <support> <confidence>
+// ./pipair <bitcode.bc> <support> <confidence> <level>
 
 // for running command line and getting the output
 vector<string> exec(const char* cmd) {
@@ -28,30 +28,25 @@ vector<string> exec(const char* cmd) {
 }
 
 void createCallGraph(vector<string> llvmOut, CallGraph& callGraph) {
-	//CallGraph *callGraph = new CallGraph();
-	// string match1 = "Call graph node for function: '(.*)'<<0x[a-f0-9]+{7}>> #uses=[0-9]+";
 	string firstLine = "for function: \'";
 	string callsiteLine = "calls function \'";
 	string functionName = "";
 	string childFunctionName;
 	for (vector<string>::iterator it = llvmOut.begin(); it != llvmOut.end(); ++it) {
 		// see if it matches to the things and call addNodes ....
-		string currLine = (*it); //do we need to get rid of spaces?
-		// if ( regex_match (currLine, regex(match1)) ) {
+		string currLine = (*it);
 		size_t findFirst = currLine.find(firstLine);
 		size_t findCallsite = currLine.find(callsiteLine);
 		if (findFirst != string::npos) {
 			findFirst += firstLine.length();
 			size_t findEndFunction = currLine.find('\'', findFirst + 1);
 			functionName = currLine.substr(findFirst, findEndFunction - findFirst);
-			// cout << "Adding: " << functionName  << " to callGraph" << endl;
 			callGraph.addNodes(functionName);
 		} else if (findCallsite != string::npos) {
 			if (functionName == "") {continue;}
 			findCallsite += callsiteLine.length();
 			size_t findCallsiteFunction = currLine.find('\'', findCallsite + 1);
 			childFunctionName = currLine.substr(findCallsite, findCallsiteFunction - findCallsite);
-			// cout << "Adding: " << childFunctionName  << " to parent " << functionName << " in callGraph" << endl;
 			callGraph.addEdges(functionName, childFunctionName);
 		}
 	}
@@ -89,7 +84,6 @@ int main(int argc, char* argv[]) {
 	createCallGraph(llvmOutp, *callGraph);
 	if (argc == 5) {callGraph->interproceduralAnalysis(level);}
 	callGraph->findBugs(T_CONFIDENCE, T_SUPPORT);
-	// callGraph->calculateConfidence(T_CONFIDENCE, T_SUPPORT);
 	delete callGraph;
 
 }

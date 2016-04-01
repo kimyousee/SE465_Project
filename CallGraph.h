@@ -10,37 +10,12 @@
 #include <string>
 #include <algorithm>
 
-struct GraphNode {
-	std::string name;
-
-	GraphNode(const std::string& strName = "")
-		: name(strName) {}
-
-	bool operator<(const GraphNode& rhs) const {
-		return name < rhs.name;
-	}
-};
-
-// bool operator<(const GraphNode &a, const GraphNode &b) {
-// 	return a.name < b.name;
-// }
-
-struct find_by_name {
-private:
-	std::string name;
-public:
-	find_by_name(const std::string & name) : name(name) {}
-	bool operator()(const GraphNode & node) {
-		return node.name == name;
-	}
-};
-
 class CallGraph {
 private:
-	// std::set<GraphNode> functionSet;
-	// std::map<GraphNode, std::set<GraphNode> > childFunctions;
+	int level;
 	std::set<std::string> functionSet;
 	std::map<std::string, std::set<std::string> > childFunctions;
+	std::map<std::string, std::set<std::string> > cloneChildFxs;
 	std::map<std::pair<std::string, std::string>, int> supportPairs;
 	std::map<std::string, int> supportMap;
 	std::map<std::pair<std::string, std::string>, std::string > highConfPairs;
@@ -49,9 +24,6 @@ public:
 	~CallGraph();
 	void addNodes(std::string functionName);
 	void addEdges(std::string parentFunction, std::string childFunctionName);
-	// std::map<std::pair<std::string, std::string>, int> getSupportPairs();
-	// std::map<std::string, int> getSupportMap;
-	//void calculateConfidence(int confidence, int support);
 	std::pair<double, double> calculateConfidence(std::pair<std::string, std::string>& pairFunctions);
 	void findBugs(int confidence, int support);
 	void interproceduralAnalysis(int level);

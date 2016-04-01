@@ -123,11 +123,14 @@ void CallGraph::findBugs(int confidence, int support) {
 	}
 }
 
-void CallGraph::interproceduralAnalysis(int level) {
+void CallGraph::interproceduralAnalysis(int levelIn) {
+	level = levelIn + 1;
+	cloneChildFxs = childFunctions; // deep copy
 	for (map<string, set<string> >::iterator it = childFunctions.begin(); it != childFunctions.end(); it++) {
 		string key = it->first;
 		set<string> value = it->second;
 		set<string> tmpSet = interprocedural(it->second, key, level);
+
 	}
 }
 
@@ -137,21 +140,23 @@ set<string> CallGraph::interprocedural(set<string> &s, string k, int curLevel) {
 		newNodes.insert(k);
 		return newNodes;
 	}
-	set<string>* modSet = &(childFunctions.find(k)->second);
-	set<string> childSet = childFunctions.find(k)->second;
+	set<string> childSet = cloneChildFxs.find(k)->second;
 	set<string> newNodes;
 
 	for (set<string>::iterator it = childSet.begin(); it != childSet.end(); it++) {
 		
-		set<string> nodesToAdd = interprocedural(childFunctions.find(*it)->second, *it, curLevel-1);
+		set<string> nodesToAdd = interprocedural(s, *it, curLevel-1);
 		
 		if (nodesToAdd.size() == 1 && nodesToAdd.find(*it)!=nodesToAdd.end()) {
 			newNodes.insert(*it);
 			continue;
+		} else {
+			newNodes.insert(nodesToAdd.begin(), nodesToAdd.end());
 		}
-		s.erase(*it);
-		newNodes.insert(nodesToAdd.begin(), nodesToAdd.end());
-		s.insert(nodesToAdd.begin(),nodesToAdd.end());
+		if (curLevel == level) {
+			s.erase(*it);
+			s.insert(newNodes.begin(),newNodes.end());
+		}
 	}
 	return newNodes;
 }
