@@ -44,7 +44,6 @@ private:
 	std::map<std::pair<std::string, std::string>, int> supportPairs;
 	std::map<std::string, int> supportMap;
 	std::map<std::pair<std::string, std::string>, std::string > highConfPairs;
-	std::map<std::string, std::pair<bool,bool> > visitedFunctions; // first bool is if visited, second is if all children are not in functionSet
 public:
 	CallGraph();
 	~CallGraph();
@@ -55,8 +54,8 @@ public:
 	//void calculateConfidence(int confidence, int support);
 	std::pair<double, double> calculateConfidence(std::pair<std::string, std::string>& pairFunctions);
 	void findBugs(int confidence, int support);
-	void interproceduralAnalysis();
-	std::set<std::string> interprocedural(std::set<std::string> &s, std::string k);
+	void interproceduralAnalysis(int level);
+	std::set<std::string> interprocedural(std::set<std::string> &s, std::string k, int level);
 };
 
 #endif
